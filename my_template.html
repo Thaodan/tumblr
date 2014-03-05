@@ -453,6 +453,40 @@ ul{
 </div>
 <div class="title"><a href="/">{title}</a></div>
 {block:Description}{Description} {/block:Description}
+<script type="text/javascript" >
+ 
+function calculateDateAgo(secAgo) {
+ var agoString, agoRange, agoScaled;
+ if(secAgo >= (agoRange = 60*60*24)) 
+   agoString = (agoScaled = Math.floor(secAgo/agoRange))+" "+(agoScaled>1?"days":"day") + " ago"
+ else if(secAgo >= (agoRange = 60*60))
+   agoString = (agoScaled = Math.floor(secAgo/agoRange))+" "+(agoScaled>1?"hours":"hour") + " ago"
+ else if(secAgo >= (agoRange = 60))
+   agoString = (agoScaled = Math.floor(secAgo/agoRange))+" "+(agoScaled>1?"minutes":"minute") + " ago"
+ else if(secAgo >= -60)
+   agoString = "listening just now";
+ else
+   agoString = "soon ;)";
+ return agoString
+}
+ 
+function lfmMostRecentTrack(JSONdata) {
+ try {
+ var oTrack = (new Array().concat(JSONdata.recenttracks.track))[0];
+ document.getElementById("lfmMostRecentTrackArtist").innerHTML = oTrack.artist["#text"];
+ document.getElementById("lfmMostRecentTrackTitle").href = oTrack.url;
+ document.getElementById("lfmMostRecentTrackTitle").innerHTML = oTrack.name;
+ document.getElementById("lfmMostRecentTrackDate").innerHTML = (typeof oTrack.date=="undefined"?"now playing":calculateDateAgo(new Date().getTime()/1000 - oTrack.date.uts));
+ document.getElementById("lfmMostRecentTrack").style.visibility = "visible";
+ } catch(e) {}
+}
+</script>
+<div id="lfmMostRecentTrack" style="visibility:hidden">
+<a id="lfmMostRecentTrackTitle" href="" target="new"></a><br/>by <span id="lfmMostRecentTrackArtist"></span><br/><span id="lfmMostRecentTrackDate" style="font-size:80%"></span>
+</div>
+<script type="text/javascript" src="http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=HodgeStar&api_key=54f8f15133336606e882fdf20148d123&limit=1&format=json&callback=lfmMostRecentTrack"></script>
+<hr width=100% align=center size=1>
+</div>
 <hr width=100% align=center size=1>
 </div>
 {/block:ifHeaderTwo}
